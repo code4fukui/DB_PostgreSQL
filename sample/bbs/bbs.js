@@ -1,4 +1,5 @@
-import { DB } from "../../DB.js";
+import { DB } from "https://code4fukui.github.io/DB_PostgreSQL/DB.js";
+//import { DB } from "../../DB.js";
 import { DateTime } from "https://js.sabae.cc/DateTime.js";
 
 const db = await new DB().init({ database: "sample1" });

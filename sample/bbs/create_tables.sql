@@ -1,5 +1,5 @@
--- create database sample1;
--- \c sample1
+create database sample1;
+\c sample1
 
 drop table db_user;
 drop table db_bbs;
@@ -18,4 +18,4 @@ create table db_bbs (
     date timestamp NOT NULL
 );
 
--- \dt
+\dt
