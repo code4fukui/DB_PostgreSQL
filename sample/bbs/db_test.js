@@ -1,4 +1,4 @@
-import { DB } from "../DB.js";
+import { DB } from "../../DB.js";
 import { DateTime } from "https://js.sabae.cc/DateTime.js";
 
 const db = await new DB().init({ database: "sample1" });
@@ -7,6 +7,7 @@ const tbl = "db_user";
 
 await db.add(tbl, {
   name: "test",
+  date: new DateTime().toString(),
   password: "pwhash",
 });
 
