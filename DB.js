@@ -111,7 +111,13 @@ class DB {
   }
 
   async add(tbl, req) {
-    await insert(this.client, tbl, req);
+    if (Array.isArray(req)) {
+      for (const r of req) {
+        await insert(this.client, tbl, r);
+      }
+    } else {
+      await insert(this.client, tbl, req);
+    }
   }
   async addWithID(tbl, idname, req) {
     const tr = await this.transaction();
@@ -150,6 +156,19 @@ class DB {
     //console.log(sql);
     const res = await this.client.queryArray(sql);
     //console.log(res);
+    return res;
+  }
+  async dropTable(tbl) {
+    try {
+      return await this.client.queryArray(`drop table ${tbl}`);
+    } catch (e) {
+    }
+  }
+  async createTable(tbl, columns) {
+    const keys = Object.keys(columns);
+    const query = `create table ${tbl} (${columns.map(c => Object.values(c).join(" ")).join(", ")})`;
+    console.log(query);
+    const res = await this.client.queryArray(query);
     return res;
   }
 };
