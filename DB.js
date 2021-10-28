@@ -34,9 +34,14 @@ const escape = (s) => {
   //return s;
 };
 
+const selectSchema = async (tr, tbl) => {
+  const res = await tr.queryArray(`select * from ${tbl} limit 0`);
+  return res.rowDescription.columns.map(m => m.name);
+};
 
 const select = async (tr, tbl, req) => {
   const res = await tr.queryArray(`select * from ${tbl}` + makeWhere(req));
+  //console.log(res);
   const columns = res.rowDescription.columns;
   const rows = res.rows;
   const res2 = [];
@@ -55,23 +60,33 @@ const selectOne = async (tr, tbl, req) => {
   const res = await tr.queryArray(`select * from ${tbl}` + makeWhere(req) + " limit 1");
   const columns = res.rowDescription.columns;
   const rows = res.rows;
+  if (rows.length == 0) {
+    return null;
+  }
+  const d = {};
+  const row = rows[i];
+  for (let j = 0; j < columns.length; j++) {
+    d[columns[j].name] = row[j];
+  }
+  return d;
+};
+const selectColumns = async (tr, tbl, name, cond) => {
+  const res = await tr.queryArray(`select ${name} from ${tbl}` + makeWhere(cond));
+  const columns = res.rowDescription.columns;
+  const rows = res.rows;
   const res2 = [];
   for (let i = 0; i < rows.length; i++) {
-    const d = {};
     const row = rows[i];
-    for (let j = 0; j < columns.length; j++) {
-      d[columns[j].name] = row[j];
-    }
-    res2.push(d);
+    res2.push(row[0]);
   }
-  return res2[0];
+  return res2;
 };
 
 const insert = async (tr, tbl, set) => {
   const values = Object.values(set).map(s => escape(s));
   const names = Object.keys(set).map(s => chks(s));
   const query = `insert into ${tbl} (${names.join(", ")}) values (${values.map(v => `'${v}'`).join(", ")})`;
-  console.log(query);
+  //console.log(query);
   const res = await tr.queryArray(query);
   //console.log("res", res);
   return res;
@@ -167,9 +182,17 @@ class DB {
   async createTable(tbl, columns) {
     const keys = Object.keys(columns);
     const query = `create table ${tbl} (${columns.map(c => Object.values(c).join(" ")).join(", ")})`;
-    console.log(query);
+    //console.log(query);
     const res = await this.client.queryArray(query);
     return res;
+  }
+  async listTable() {
+    //return await this.client.queryArray(`select tablename from pg_catalog.pg_tables where schemaname != 'pg_catalog' and schemaname != 'information_schema'`);
+    return await selectColumns(this.client, "pg_catalog.pg_tables", "tablename", { schemaname: "public" });
+  }
+  async getTableSchema(tbl) {
+    //return await this.client.queryArray(`select tablename from pg_catalog.pg_tables where schemaname != 'pg_catalog' and schemaname != 'information_schema'`);
+    return await selectSchema(this.client, tbl);
   }
 };
 
