@@ -64,7 +64,7 @@ const selectOne = async (tr, tbl, req) => {
     return null;
   }
   const d = {};
-  const row = rows[i];
+  const row = rows[0];
   for (let j = 0; j < columns.length; j++) {
     d[columns[j].name] = row[j];
   }
