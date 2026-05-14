@@ -1,36 +1,42 @@
 # DB_PostgreSQL
 
-Denoで、PostgreSQLを扱う DB.js
+> 日本語のREADMEはこちらです: [README.ja.md](README.ja.md)
 
-## サンプル
+Deno-based DB.js for handling PostgreSQL.
 
-[ログイン付きBBS](https://github.com/taisukef/server.js/tree/bbs_with_login)のフロントエンドをそのまま使用
+## Features
+- Operation of PostgreSQL database
+- Transaction management
+- Simple CRUD operations
+- Automatic generation of table definitions
 
-コマンドでPostgreSQLインストール (Mac)
+## Requirements
+- Deno
+- PostgreSQL
+
+## Usage
+
+Install PostgreSQL (Mac):
 
 ```
 brew install postgresql
 brew services start postgresql
 psql postgres
-```
-
-PostgreSQL内
-
-```
 create user postgres SUPERUSER;
 exit
 ```
 
-コマンドで、テーブル作成（既存テーブルデータは drop table で削除される）
+Create tables (existing table data will be dropped):
 
 ```
 psql -U postgres -f create_tables.sql
 ```
 
-コマンドで、APIサーバー実行
+Run the API server:
 
 ```
 sh run.sh
 ```
 
-ブラウザで[http://localhost:3001/](http://localhost:3001/)を開く
+## License
+MIT License
